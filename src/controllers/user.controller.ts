@@ -44,6 +44,7 @@ const createUserController = async (req: Request, res: Response) => {
 };
 
 const getAllUsersController = async (req: Request, res: Response) => {
+
   try {
     const users = await UserService.getAllUsers();
     res.status(200).send(
@@ -78,6 +79,20 @@ const getUserController = async ( req: Request, res: Response) => {
   }
 }
 
+const updateUserController = async (req:Request , res:Response) => {
+  const id = Number(req.params.id);
+  try{
+    const user = await UserService.updateUser(id, req.body);
+      res.status(200).send(user);
+  }catch(error:any){
+    console.error(error);
+    if (error.message === "User not found") {
+      return res.status(404).send({ message: error.message });
+    }
+    res.status(500).send({ message: "Internal server error" });
+  }
+}
 
 
-export { createUserController, getAllUsersController, getUserController };
+
+export { createUserController, getAllUsersController, getUserController , updateUserController };

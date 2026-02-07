@@ -57,4 +57,25 @@ export class UserService {
       }
     }
   }
+
+  static async updateUser(id:number , userData: Prisma.UserUpdateInput) {
+    const existingUser = await prisma.user.findUnique({
+      where: { id },
+    });
+    if (!existingUser) {
+      throw new Error("User not found");
+    }
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: userData,
+    });
+    return {
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      }
+    };
+  }
 }
