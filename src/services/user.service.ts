@@ -93,4 +93,18 @@ export class UserService {
       message: "User deleted successfully",
     };
   }
+
+  static async getAllEmployees() {
+    const employees = await prisma.user.findMany({
+      where: { role: "EMPLOYEE" },
+    });
+    return employees;
+  }
+
+  static async getAllHrs() {
+    const hrs = await prisma.user.findMany({
+      where: { role: "HR" },
+    });
+    return hrs;
+  }
 }

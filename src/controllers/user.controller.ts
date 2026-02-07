@@ -65,6 +65,27 @@ const getAllUsersController = async (req: Request, res: Response) => {
   }
 };
 
+const getAllEmployeesController = async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.getAllEmployees();
+    res.status(200).send(
+      users.map((user: any) => {
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        };
+      }),
+    );
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+}
+
 const getUserController = async ( req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
@@ -107,6 +128,27 @@ const deleteUserController = async (req: Request, res: Response) => {
   }
 }
 
+ const getAllHrsController = async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.getAllHrs();
+    res.status(200).send(
+      users.map((user: any) => {
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        };
+      }),
+    );
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+}
 
 
-export { createUserController, getAllUsersController, getUserController , updateUserController , deleteUserController };
+
+export { createUserController, getAllUsersController, getUserController , updateUserController , deleteUserController , getAllEmployeesController, getAllHrsController };
