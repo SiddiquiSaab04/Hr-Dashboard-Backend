@@ -78,4 +78,19 @@ export class UserService {
       }
     };
   }
+
+  static async deleteUser(id:number){
+    const existingUser = await prisma.user.findUnique({
+      where: { id },
+    });
+    if (!existingUser) {
+      throw new Error("User not found");
+    }
+    const deletedUser = await prisma.user.delete({
+      where: { id },
+    });
+    return {
+      message: "User deleted successfully",
+    };
+  }
 }

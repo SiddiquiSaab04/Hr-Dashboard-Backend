@@ -93,6 +93,20 @@ const updateUserController = async (req:Request , res:Response) => {
   }
 }
 
+const deleteUserController = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const user = await UserService.deleteUser(id);
+    res.status(200).send(user);
+  } catch (error: any) {
+    console.error(error);
+    if (error.message === "User not found") {
+      return res.status(404).send({ message: error.message });
+    }
+    res.status(500).send({ message: "Internal server error" });
+  }
+}
 
 
-export { createUserController, getAllUsersController, getUserController , updateUserController };
+
+export { createUserController, getAllUsersController, getUserController , updateUserController , deleteUserController };
