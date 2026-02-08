@@ -11,7 +11,7 @@ const secretKey = process.env.SECRET_KEY as string;
 export class UserService {
   static async createUser(userData: Prisma.UserCreateInput) {
     const validateInput = createUserValidationSchema.parse(userData);
-    const { email, name, password, role } = validateInput;
+    const { email, name, password, role, deptId } = validateInput;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -27,6 +27,7 @@ export class UserService {
         name,
         password: hashedPassword,
         role,
+        deptId,
       },
     });
     const token = await jwt.sign({ id: user.id }, secretKey, {
@@ -37,13 +38,20 @@ export class UserService {
   }
 
   static async getAllUsers() {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        dept: true,
+      }
+    });
     return users;
   }
 
   static async getUserById(id: number) {
     const user = await prisma.user.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        dept: true,
+      }
     })
     if (!user) {
       throw new Error("User not found");
@@ -54,6 +62,7 @@ export class UserService {
         name: user.name,
         email: user.email,
         role: user.role,
+        department: user?.dept?.deptName,
       }
     }
   }
@@ -75,6 +84,7 @@ export class UserService {
         name: updatedUser.name,
         email: updatedUser.email,
         role: updatedUser.role,
+        deptId: updatedUser.deptId,
       }
     };
   }
@@ -97,6 +107,9 @@ export class UserService {
   static async getAllEmployees() {
     const employees = await prisma.user.findMany({
       where: { role: "EMPLOYEE" },
+      include: {
+        dept: true,
+      }
     });
     return employees;
   }
@@ -104,6 +117,9 @@ export class UserService {
   static async getAllHrs() {
     const hrs = await prisma.user.findMany({
       where: { role: "HR" },
+      include: {
+        dept: true,
+      }
     });
     return hrs;
   }

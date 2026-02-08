@@ -6,6 +6,7 @@ const createUserValidationSchema = z.object({
     name: z.string().min(1).max(100).optional(),
     password: z.string().min(8),
     role: z.enum(Role).optional().default(Role.EMPLOYEE),
+    deptId: z.number(),
 });
 
 const userValidationSchema = z.object({
@@ -19,6 +20,7 @@ const updateUserValidationSchema = z.object({
     name: z.string().min(1).max(100).optional(),
     password: z.string().min(8).optional(),
     role: z.enum(Role).optional(),
+    deptId: z.number().optional(),
 });
 
 export {
