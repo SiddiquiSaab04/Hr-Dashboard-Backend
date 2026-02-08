@@ -14,12 +14,39 @@ model User {
   name  String?
   password String
   role Role @default(EMPLOYEE)
+  deptId Int?
+  dept Department? @relation(fields:[deptId],references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  attendance Attendance[]
 }
 
 enum Role {
   ADMIN
   HR
   EMPLOYEE
+}
+
+model Attendance {
+  id Int @id @default(autoincrement())
+  userId Int
+  checkIn DateTime
+  checkOut DateTime?
+  user   User   @relation(fields: [userId], references: [id])
+  status AttendanceStatus
+  date DateTime
+  createdAt DateTime @default(now())
+  @@unique([userId,date])
+}
+
+enum AttendanceStatus{
+  PRESENT
+  ABSENT
+  LEAVE
+}
+
+model Department {
+  id Int  @id @default(autoincrement())
+  deptName String
+  user User[]
 }
