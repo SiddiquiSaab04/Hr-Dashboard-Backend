@@ -41,4 +41,25 @@ export class AttendanceService {
       deptName: a?.user?.dept?.deptName || "No department",
     }));
   }
+
+  static async getAttendanceById(id:number){
+    const attendance = await prisma.attendance.findUnique({
+      where: { id },
+    });
+    if(!attendance){
+      throw new Error("Attendance not found");
+    }
+    return attendance;
+  }
+
+  static async updateAttendance(id: number, attendanceData: Prisma.AttendanceUpdateInput) {
+    const attendance = await prisma.attendance.update({
+      where: { id },
+      data: attendanceData,
+    });
+    if (!attendance) {
+      throw new Error("Attendance not found");
+    }
+    return attendance;
+  }
 }

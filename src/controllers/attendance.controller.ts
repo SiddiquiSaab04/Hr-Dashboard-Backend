@@ -20,5 +20,29 @@ export const AttendanceController = {
         } catch (error) {
              res.status(404).json({ error: "user not found" });
         }
+    },
+    getAttendanceById: async (req : Request , res : Response) => {
+        const id = Number(req.params.id);
+        try {
+            const attendance = await AttendanceService.getAttendanceById(id);
+            res.status(200).json(attendance);
+        } catch (error) {
+             res.status(404).json({ error: "attendance not found" });
+        }
+    },
+    updateAttendance: async (req: Request, res: Response) => {
+        const id = Number(req.params.id);
+        const attendanceData = req.body;
+        try {
+            const attendance = await AttendanceService.updateAttendance(id, attendanceData);
+            res.status(200).json(attendance);
+        } catch (error: any) {
+            console.error("Error updating attendance:", error);
+            if (error.code === 'P2025') {
+                 return res.status(404).json({ error: "Attendance record not found" });
+            }
+             res.status(500).json({ error: "Internal server error", details: error.message });
+        }
     }
+    
 }

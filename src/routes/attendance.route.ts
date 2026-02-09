@@ -7,4 +7,6 @@ router.use(authMiddleware);
 router.post("/create-attendance", requireAny, AttendanceController.createAttendance);
 router.get("/get-all-attendance", requireAny, AttendanceController.getAllAttendance);
 router.get("/get-attendance/:userId", requireAny, AttendanceController.getAttendanceByUserId);
-export default router;
+router.get("/get-attendanceById/:id", requireAny, AttendanceController.getAttendanceById);
+router.put("/update-attendance/:id",requireAny, AttendanceController.updateAttendance);
+export default router;  
