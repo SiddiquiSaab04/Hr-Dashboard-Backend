@@ -1,7 +1,10 @@
 import express from "express";
 import { AttendanceController } from "../controllers/attendance.controller";
+import authMiddleware from "../middilewares/auth";
+import { requireAdminOrHRRole, requireHRRole , requireAny } from "../middilewares/role";
 const router = express.Router();
-
-router.post("/create-attendance", AttendanceController.createAttendance);
-
+router.use(authMiddleware);
+router.post("/create-attendance", requireAny, AttendanceController.createAttendance);
+router.get("/get-all-attendance", requireAny, AttendanceController.getAllAttendance);
+router.get("/get-attendance/:userId", requireAny, AttendanceController.getAttendanceByUserId);
 export default router;
