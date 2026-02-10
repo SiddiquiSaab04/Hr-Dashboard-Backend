@@ -4,32 +4,44 @@ import { Prisma } from "@prisma/client";
 
 export const AttendanceController = {
     createAttendance: async (req: Request, res: Response) => {
-        const attendanceData = req.body;
-        const attendance = await AttendanceService.createAttendance(attendanceData as Prisma.AttendanceCreateInput);
-        res.status(201).json(attendance);
+       try {
+            const attendanceData = req.body;
+            if (!attendanceData.userId) {
+                throw new Error("User ID is required to create attendance");
+            }
+            const attendance = await AttendanceService.createAttendance(attendanceData as Prisma.AttendanceCreateInput);
+            res.status(201).json(attendance);
+        } catch (error: any) {
+            console.error("Error creating attendance:", error);
+            res.status(500).json({ error: "Internal server error", details: error.message });
+        }
     },
+
     getAllAttendance: async (req: Request, res: Response) => {
         const attendance = await AttendanceService.getAllAttendance();
         res.status(200).json(attendance);
     },
+
     getAttendanceByUserId: async (req: Request, res: Response) => {
         const userId = req.params.userId;
         try {
             const attendance = await AttendanceService.getAttendanceByUserId(Number(userId));
             res.status(200).json(attendance);
         } catch (error) {
-             res.status(404).json({ error: "user not found" });
+            res.status(404).json({ error: "user not found" });
         }
     },
-    getAttendanceById: async (req : Request , res : Response) => {
+
+    getAttendanceById: async (req: Request, res: Response) => {
         const id = Number(req.params.id);
         try {
             const attendance = await AttendanceService.getAttendanceById(id);
             res.status(200).json(attendance);
         } catch (error) {
-             res.status(404).json({ error: "attendance not found" });
+            res.status(404).json({ error: "attendance not found" });
         }
     },
+
     updateAttendance: async (req: Request, res: Response) => {
         const id = Number(req.params.id);
         const attendanceData = req.body;
@@ -39,10 +51,24 @@ export const AttendanceController = {
         } catch (error: any) {
             console.error("Error updating attendance:", error);
             if (error.code === 'P2025') {
-                 return res.status(404).json({ error: "Attendance record not found" });
+                return res.status(404).json({ error: "Attendance record not found" });
             }
-             res.status(500).json({ error: "Internal server error", details: error.message });
+            res.status(500).json({ error: "Internal server error", details: error.message });
+        }
+    },
+
+    deleteAttendance: async (req: Request, res: Response) => {
+        const id = Number(req.params.id);
+        try {
+            await AttendanceService.deleteAttendance(id);
+            res.status(204).send("Attendance deleted successfully");
+        } catch (error: any) {
+            console.error("Error deleting attendance:", error);
+            if (error.code === 'P2025') {
+                return res.status(404).json({ error: "Attendance record not found" });
+            }
+            res.status(500).json({ error: "Internal server error", details: error.message });
         }
     }
-    
+
 }

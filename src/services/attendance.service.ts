@@ -3,6 +3,17 @@ import prisma from "../prisma/client";
 import { Prisma } from "@prisma/client";
 export class AttendanceService {
   static async createAttendance(attendanceData: Prisma.AttendanceCreateInput) {
+
+    const userId = (attendanceData as any)?.userId;
+    if (userId) {
+      const userExists = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+      if (!userExists) {
+        throw new Error("User does not exist");
+      }
+    }
+
     const attendance = await prisma.attendance.create({
       data: attendanceData,
     });
@@ -62,4 +73,11 @@ export class AttendanceService {
     }
     return attendance;
   }
+
+  static async deleteAttendance(id: number) {
+    await prisma.attendance.delete({
+      where: { id },
+    });
+  }
+
 }

@@ -1,7 +1,7 @@
 import express from "express";
 import { AttendanceController } from "../controllers/attendance.controller";
 import authMiddleware from "../middilewares/auth";
-import { requireAdminOrHRRole, requireHRRole , requireAny } from "../middilewares/role";
+import { requireAdminOrHRRole , requireAny } from "../middilewares/role";
 const router = express.Router();
 router.use(authMiddleware);
 router.post("/create-attendance", requireAny, AttendanceController.createAttendance);
@@ -9,4 +9,5 @@ router.get("/get-all-attendance", requireAny, AttendanceController.getAllAttenda
 router.get("/get-attendance/:userId", requireAny, AttendanceController.getAttendanceByUserId);
 router.get("/get-attendanceById/:id", requireAny, AttendanceController.getAttendanceById);
 router.put("/update-attendance/:id",requireAny, AttendanceController.updateAttendance);
+router.delete("/delete-attendance/:id", requireAdminOrHRRole, AttendanceController.deleteAttendance);
 export default router;  
