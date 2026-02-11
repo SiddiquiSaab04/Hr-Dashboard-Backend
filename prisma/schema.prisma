@@ -30,12 +30,13 @@ enum Role {
 model Attendance {
   id Int @id @default(autoincrement())
   userId Int
-  checkIn DateTime
-  checkOut DateTime?
+  checkIn DateTime @default(now())
+  checkOut DateTime? 
   user   User   @relation(fields: [userId], references: [id])
   status AttendanceStatus
-  date DateTime
+  date DateTime?
   createdAt DateTime @default(now())
+  updatedAt  DateTime? @default(now())
   @@unique([userId,date])
 }
 

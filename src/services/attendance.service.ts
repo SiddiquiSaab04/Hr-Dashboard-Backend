@@ -2,9 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../prisma/client";
 import { Prisma } from "@prisma/client";
 export class AttendanceService {
-  static async createAttendance(attendanceData: Prisma.AttendanceCreateInput) {
-
-    const userId = (attendanceData as any)?.userId;
+  static async checkIn(userId: number) {
     if (userId) {
       const userExists = await prisma.user.findUnique({
         where: { id: userId },
@@ -14,10 +12,29 @@ export class AttendanceService {
       }
     }
 
-    const attendance = await prisma.attendance.create({
-      data: attendanceData,
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const existingAttendance = await prisma.attendance.findFirst({
+      where: {
+        userId: userId,
+        date: today,
+      },
     });
-    return attendance;
+
+    if (existingAttendance) {
+      throw new Error("User has already checked in today");
+    }
+
+    const attendance = await prisma.attendance.create({
+      data: {
+       userId,
+        date: today,
+        status: "PRESENT",
+        checkIn: new Date(),
+      },
+    });
+    return { ...attendance };
   }
 
   static async getAllAttendance() {
@@ -34,16 +51,16 @@ export class AttendanceService {
             dept: {
               select: {
                 deptName: true,
-              }
+              },
             },
-          }
+          },
         },
-      }
+      },
     });
     if (!attendance) {
       throw new Error("Attendance not found");
     }
-    return attendance.map(a => ({
+    return attendance.map((a) => ({
       id: a.id,
       date: a.date,
       checkIn: a.checkIn,
@@ -53,17 +70,20 @@ export class AttendanceService {
     }));
   }
 
-  static async getAttendanceById(id:number){
+  static async getAttendanceById(id: number) {
     const attendance = await prisma.attendance.findUnique({
       where: { id },
     });
-    if(!attendance){
+    if (!attendance) {
       throw new Error("Attendance not found");
     }
     return attendance;
   }
 
-  static async updateAttendance(id: number, attendanceData: Prisma.AttendanceUpdateInput) {
+  static async updateAttendance(
+    id: number,
+    attendanceData: Prisma.AttendanceUpdateInput,
+  ) {
     const attendance = await prisma.attendance.update({
       where: { id },
       data: attendanceData,
@@ -79,5 +99,4 @@ export class AttendanceService {
       where: { id },
     });
   }
-
 }

@@ -3,16 +3,22 @@ import { AttendanceService } from "../services/attendance.service";
 import { Prisma } from "@prisma/client";
 
 export const AttendanceController = {
-    createAttendance: async (req: Request, res: Response) => {
+    checkIn: async (req: Request, res: Response) => {
        try {
             const attendanceData = req.body;
             if (!attendanceData.userId) {
-                throw new Error("User ID is required to create attendance");
+                throw new Error("User ID is required to check in");
             }
-            const attendance = await AttendanceService.createAttendance(attendanceData as Prisma.AttendanceCreateInput);
+            const attendance = await AttendanceService.checkIn(attendanceData.userId);
             res.status(201).json(attendance);
         } catch (error: any) {
-            console.error("Error creating attendance:", error);
+            if (error.message === "User does not exist") {
+                return res.status(404).json({ error: "User not found" });
+            }
+            if (error.message === "User has already checked in today") {
+                return res.status(400).json({ error: "User has already checked in today" });
+            }
+            console.error("Error checking in:", error);
             res.status(500).json({ error: "Internal server error", details: error.message });
         }
     },
