@@ -2,33 +2,22 @@ import { Request, Response } from "express";
 import prisma from "../prisma/client";
 import { Prisma } from "@prisma/client";
 export class AttendanceService {
-  static async checkIn(userId: number) {
-    if (userId) {
-      const userExists = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-      if (!userExists) {
-        throw new Error("User does not exist");
-      }
-    }
 
+  static async checkIn(userId: number) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const existingAttendance = await prisma.attendance.findFirst({
       where: {
         userId: userId,
         date: today,
       },
     });
-
     if (existingAttendance) {
       throw new Error("User has already checked in today");
     }
-
     const attendance = await prisma.attendance.create({
       data: {
-       userId,
+        userId,
         date: today,
         status: "PRESENT",
         checkIn: new Date(),
@@ -38,8 +27,32 @@ export class AttendanceService {
   }
 
   static async getAllAttendance() {
-    const attendance = await prisma.attendance.findMany();
-    return attendance;
+    const attendance = await prisma.attendance.findMany(
+      {
+        include: {
+          user: {
+            select: {
+              name: true,
+              id: true,
+              dept: {
+                select: {
+                  deptName: true,
+                },
+              },
+            },
+          },
+      }
+    })
+    return attendance.map((a) => ({
+      id: a.id,
+      userId: a?.user?.id || "No id",
+      userName: a?.user?.name || "No name",
+      checkIn: a.checkIn,
+      checkOut: a.checkOut,
+      deptName: a?.user?.dept?.deptName || "No department",
+      status: a.status,
+      date: a.date,
+    }));
   }
 
   static async getAttendanceByUserId(userId: number) {
@@ -48,6 +61,7 @@ export class AttendanceService {
       include: {
         user: {
           select: {
+            name: true,
             dept: {
               select: {
                 deptName: true,
@@ -62,11 +76,12 @@ export class AttendanceService {
     }
     return attendance.map((a) => ({
       id: a.id,
-      date: a.date,
+      userName: a?.user?.name || "No name",
       checkIn: a.checkIn,
       checkOut: a.checkOut,
-      status: a.status,
       deptName: a?.user?.dept?.deptName || "No department",
+      status: a.status,
+      date: a.date,
     }));
   }
 
