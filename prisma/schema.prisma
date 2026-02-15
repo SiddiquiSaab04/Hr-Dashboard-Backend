@@ -19,6 +19,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
   attendance Attendance[]
+  leave Leave[]
 }
 
 enum Role {
@@ -50,4 +51,30 @@ model Department {
   id Int  @id @default(autoincrement())
   deptName String
   user User[]
+}
+
+model Leave {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields:[userId],references:[id])
+  type LeaveType
+  status LeaveStatus @default(PENDING)
+  days Int 
+  reason String?
+  startDate DateTime
+  endDate DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())  
+}
+
+enum LeaveType{
+  CASUAL
+  SICK
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
