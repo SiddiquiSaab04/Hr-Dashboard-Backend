@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 import { createUserValidationSchema } from "../validators/user.validation";
+
 const createUserController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;

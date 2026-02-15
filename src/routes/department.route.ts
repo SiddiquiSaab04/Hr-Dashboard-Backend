@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createDepartment, getAllDepartments, getDepartmentById, updateDepartment, deleteDepartment } from "../controllers/department.controller";
 import authMiddleware from "../middilewares/auth";
-import { requireAdminRole, requireAdminOrHRRole, requireHRRole } from "../middilewares/role";
+import { requireAdminRole, requireAdminOrHRRole } from "../middilewares/role";
 
 const router = Router();
 
