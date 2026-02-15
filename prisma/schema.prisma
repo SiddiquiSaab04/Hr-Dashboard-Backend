@@ -17,7 +17,7 @@ model User {
   deptId Int?
   dept Department? @relation(fields:[deptId],references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   attendance Attendance[]
 }
 
@@ -36,7 +36,7 @@ model Attendance {
   status AttendanceStatus
   date DateTime?
   createdAt DateTime @default(now())
-  updatedAt  DateTime? @default(now())
+  updatedAt  DateTime @updatedAt
   @@unique([userId,date])
 }
 

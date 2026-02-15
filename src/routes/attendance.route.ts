@@ -10,5 +10,5 @@ router.get("/get-attendance/:userId", requireAny, AttendanceController.getAttend
 router.get("/get-attendanceById/:id", requireAny, AttendanceController.getAttendanceById);
 router.put("/update-attendance/:id",requireAny, AttendanceController.updateAttendance);
 router.delete("/delete-attendance/:id", requireAdminOrHRRole, AttendanceController.deleteAttendance);
-
+router.post("/check-out", requireAny, AttendanceController.checkOut);
 export default router;  
