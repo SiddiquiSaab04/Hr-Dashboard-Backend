@@ -139,6 +139,15 @@ export class AttendanceService {
     }));
   }
 
+  static async getMyAttendance(userId: number) {
+    const attendance = await prisma.attendance.findMany({
+      where:{
+        userId:userId,
+      }
+    })
+    return attendance;
+  }
+
   static async getAttendanceById(id: number) {
     const attendance = await prisma.attendance.findUnique({
       where: { id },

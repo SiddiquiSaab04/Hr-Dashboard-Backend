@@ -43,6 +43,12 @@ export const AttendanceController = {
     }
   },
 
+  getMyAttendance: async (req: Request, res: Response)=>{
+    const userId = (req as any).user.id;
+    const attendance = await AttendanceService.getMyAttendance(userId);
+    res.status(200).json(attendance);
+  },
+
   updateAttendance: async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const attendanceData = req.body;
