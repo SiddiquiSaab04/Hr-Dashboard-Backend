@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../prisma/client";
+import { log } from "node:console";
 
 export class LeaveService {
 
@@ -62,6 +63,17 @@ export class LeaveService {
       return leaveRequests;
     } catch (error) {
       throw new Error("Error fetching leave requests: " + error);
+    }
+  }
+  static async getLeaveById(id : number) {
+    try {
+      const leaveRequest = await prisma.leave.findUnique({
+        where: { id:id as number }
+      });
+      console.log(leaveRequest);
+      return leaveRequest;
+    } catch (error) {
+      throw new Error("Error fetching leave request: " + error);
     }
   }
 
