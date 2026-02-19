@@ -8,7 +8,12 @@ const requestLeave = async (req: Request, res: Response) => {
     res.status(200).json(leaveRequest);
 };
 
+const getAllLeaves = async (req: Request, res: Response) => {
+    const leaveRequests = await LeaveService.getAllLeaves();
+    res.status(200).json(leaveRequests);
+}
 
 export {
-    requestLeave
+    requestLeave,
+    getAllLeaves
 }
