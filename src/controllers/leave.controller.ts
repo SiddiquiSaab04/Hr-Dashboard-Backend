@@ -15,12 +15,27 @@ const getAllLeaves = async (req: Request, res: Response) => {
 
 const getLeaveById = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
+    console.log("id",id);
+    
+    if(id !== undefined){
     const leaveRequest = await LeaveService.getLeaveById(id);
-    res.status(200).json(leaveRequest);
+        res.status(200).json(leaveRequest);
+
+    }
 }
+
+const getLeaveByUserId = async (req: Request, res: Response) => {
+    const userId = Number(req.params.id);
+    console.log("Fetching leaves for user ID:", userId);
+    const leaveRequests = await LeaveService.getLeaveByUserId(userId);
+    res.status(200).json(leaveRequests);
+}
+
+
 
 export {
     requestLeave,
     getAllLeaves,
-    getLeaveById
+    getLeaveById,
+    getLeaveByUserId
 }

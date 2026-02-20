@@ -77,5 +77,15 @@ export class LeaveService {
     }
   }
 
+  static async getLeaveByUserId(userId : number) {
+    try {
+      const leaveRequests = await prisma.leave.findMany({
+        where: { userId }
+      });
+      return leaveRequests;
+    } catch (error) {
+      throw new Error("Error fetching leave requests: " + error);
+    }
+  }
 
 }
