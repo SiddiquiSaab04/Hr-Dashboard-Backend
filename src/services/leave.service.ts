@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
+import { LeaveStatus, Prisma } from "@prisma/client";
 import prisma from "../prisma/client";
-import { log } from "node:console";
-
+import { Request,Response  } from "express";
+import { error } from "node:console";
 export class LeaveService {
 
     static async requestLeave(userId: number, leaveData: Prisma.LeaveCreateInput) {
@@ -86,6 +86,27 @@ export class LeaveService {
     } catch (error) {
       throw new Error("Error fetching leave requests: " + error);
     }
+  }
+
+  static async updateLeaveStatus(userId:number , status : LeaveStatus){
+      const existingUser = await prisma.leave.findFirst({
+        where:{
+            userId,
+            status:"PENDING",
+        }
+      })
+      if(!existingUser){
+       throw new Error("user not found");
+      }
+        const updateStatus = await prisma.leave.update({
+          where:{
+            id:existingUser.id,
+          },
+          data:{
+            status:status,
+          }
+        }) 
+      return updateStatus;
   }
 
 }
