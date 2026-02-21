@@ -89,11 +89,16 @@ export class LeaveService {
   }
 
  static async updateLeaveStatus(userId: number, status: LeaveStatus) {
-
+    
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const existingLeave = await prisma.leave.findFirst({
     where: {
       userId,
       status: "PENDING",
+      startDate: {
+        gte: today,
+      },
     },
   });
 
@@ -122,6 +127,6 @@ static async autoRejectExpiredLeaves() {
     },
     data: { status: "REJECTED" },
   });
+  return "Leaves updated successfully";
 }
-
 }
