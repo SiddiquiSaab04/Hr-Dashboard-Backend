@@ -11,7 +11,7 @@ const secretKey = process.env.SECRET_KEY as string;
 export class UserService {
   static async createUser(userData: Prisma.UserCreateInput) {
     const validateInput = createUserValidationSchema.parse(userData);
-    const { email, name, password, role, deptId } = validateInput;
+    const { email, name, password, role, deptName } = validateInput;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -20,6 +20,23 @@ export class UserService {
     if (existingUser) {
       throw new Error("User already exists");
     }
+
+    let deptId: number | null = null;
+    if (deptName) {
+      const deptNameClean = deptName.trim();
+      const department = await prisma.department.findFirst({
+        where: {
+          deptName: {
+            equals: deptNameClean,
+          },
+        },
+      });
+      if (!department) {
+        throw new Error("Department not found");
+      }
+      deptId = department.id;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {

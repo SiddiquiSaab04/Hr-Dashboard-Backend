@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 import { createUserValidationSchema } from "../validators/user.validation";
+import { id } from "zod/v4/locales";
 
 const createUserController = async (req: Request, res: Response) => {
   try {
@@ -28,6 +29,7 @@ const createUserController = async (req: Request, res: Response) => {
 
     const data = await UserService.createUser(validateInput.data);
     res.status(201).send({
+      id: data.user.id,
       email: data.user.email,
       name: data.user.name,
       role: data.user.role,
