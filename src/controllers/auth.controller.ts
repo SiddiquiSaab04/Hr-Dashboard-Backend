@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import Login from "../services/auth.service";
+import {Login} from "../services/auth.service";
 import { loginValidationSchema } from "../validators/auth.validation";
+import  {Logout}  from "../services/auth.service";
 
 async function LoginController(req: Request, res: Response) {
   try {
@@ -22,6 +23,23 @@ async function LoginController(req: Request, res: Response) {
     }
     return res.status(500).send({ message: "Internal server error" });
   }
+
 }
 
-export default LoginController;
+async function LogoutController(req: Request, res: Response) {
+  try {
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(" ")[1];
+      await Logout(token);
+      return res.status(200).send({ message: "Logout successful" });
+    } else {
+      return res.status(400).send({ message: "Authorization header missing" });
+    }
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+}
+
+export {LoginController, LogoutController };

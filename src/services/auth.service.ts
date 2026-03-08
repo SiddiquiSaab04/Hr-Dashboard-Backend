@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const secretKey = process.env.SECRET_KEY as string;
-
+export const tokenBlacklist = new Set<string>();
 async function Login(credentials: any) {
   const { email, password } = credentials;
 
@@ -39,4 +39,13 @@ async function Login(credentials: any) {
   };
 }
 
-export default Login;
+async function Logout(token: string) {
+  tokenBlacklist.add(token);
+    console.log("Blacklist after logout:", tokenBlacklist);
+}
+function isTokenBlacklisted(token: string): boolean {
+    console.log("Checking blacklist:", tokenBlacklist);
+  return tokenBlacklist.has(token);
+}
+
+export {Login, Logout, isTokenBlacklisted };

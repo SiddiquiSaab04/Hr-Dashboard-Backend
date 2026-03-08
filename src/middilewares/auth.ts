@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import prisma from "../prisma/client";
-
+import { isTokenBlacklisted } from "../services/auth.service";
 dotenv.config();
 const secretKey = process.env.SECRET_KEY as string;
 
@@ -15,7 +15,9 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
         .status(401)
         .send({ message: "Unauthorized: Authorization header is missing" });
     }
-
+    if (isTokenBlacklisted(token)) {
+      return res.status(401).send({ message: "Unauthorized: Token is blacklisted" });
+    }
     let decodedToken: any;
     try {
       decodedToken = jwt.verify(token, secretKey);
